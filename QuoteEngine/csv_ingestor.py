@@ -1,5 +1,5 @@
-from ingestor_interface import IngestorInterface
-from quote_model import QuoteModel
+from .ingestor_interface import IngestorInterface
+from .quote_model import QuoteModel
 from typing import List
 from pathlib import Path
 import csv

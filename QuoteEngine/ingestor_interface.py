@@ -1,7 +1,7 @@
 import abc
 from pathlib import Path
 from typing import List
-from quote_model import QuoteModel
+from .quote_model import QuoteModel
 
 class IngestorInterface:
     supported_file_ext: List[str] = []
