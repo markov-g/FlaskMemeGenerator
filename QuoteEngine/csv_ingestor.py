@@ -4,8 +4,9 @@ from typing import List
 from pathlib import Path
 import csv
 
+
 class CSVIngestor(IngestorInterface):
-    supported_file_ext = [ ".csv" ]
+    supported_file_ext = [".csv"]
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:

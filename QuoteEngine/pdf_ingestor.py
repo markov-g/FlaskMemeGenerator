@@ -8,9 +8,9 @@ from random import randint
 
 
 class PDFIngestor(IngestorInterface):
-    supported_file_ext = [ '.pdf' ]
+    supported_file_ext = ['.pdf']
 
-    pdftotext_executable = '/Users/r1pp3r/PACKAGEMGMT/Homebrew/bin/pdftotext'
+    pdftotext_executable = 'pdftotext'
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:

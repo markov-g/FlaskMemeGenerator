@@ -3,8 +3,9 @@ from .quote_model import QuoteModel
 from typing import List
 from pathlib import Path
 
+
 class TXTIngestor(IngestorInterface):
-    supported_file_ext = [ ".txt" ]
+    supported_file_ext = [".txt"]
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:

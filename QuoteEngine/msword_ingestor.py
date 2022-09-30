@@ -4,8 +4,9 @@ from typing import List
 import docx
 from pathlib import Path
 
+
 class MSWordIngestor(IngestorInterface):
-    supported_file_ext = [ ".doc", ".docx" ]
+    supported_file_ext = [".doc", ".docx"]
 
     @classmethod
     def parse(cls, path: str) -> List[QuoteModel]:
@@ -23,4 +24,3 @@ class MSWordIngestor(IngestorInterface):
                 extracted_quotes.append(quote)
 
         return extracted_quotes
-

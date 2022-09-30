@@ -5,6 +5,7 @@ import argparse
 import QuoteEngine as qe
 import MemeEngine as me
 
+
 def generate_meme(path=None, body=None, author=None):
     """ Generate a meme given an path and a quote """
     img = None
@@ -61,6 +62,7 @@ def make_parser():
                         help='a path of image directory')
 
     return parser
+
 
 if __name__ == "__main__":
     parser = make_parser()

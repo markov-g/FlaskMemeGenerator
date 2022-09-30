@@ -1,5 +1,6 @@
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
+
 class MemeGenerator:
     def __init__(self, output_dir: str):
         self._output_dir = Path.cwd().joinpath(Path(output_dir))
@@ -15,12 +16,12 @@ class MemeGenerator:
             out_location.mkdir()
         try:
             image.save(out_location.joinpath('img.png'))
-            return out_location.as_posix()+'/img.png'
+            return out_location.as_posix() + '/img.png'
         except OSError as e:
             print(f'Something went wrong when trying to write the image: {image} to disk: {self._output_dir}')
             print(e)
 
-    def _resize_image(self, image: Image, width:int=500) -> Image:
+    def _resize_image(self, image: Image, width: int = 500) -> Image:
         current_width = image.width
         current_height = image.height
         aspect_ratio = current_width / current_height
@@ -50,4 +51,3 @@ class MemeGenerator:
         output = self._save_image(image=image_with_quote, out_location=self._output_dir)
 
         return output
-

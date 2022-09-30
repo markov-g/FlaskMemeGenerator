@@ -13,6 +13,7 @@ import MemeEngine as me
 app = Flask(__name__)
 meme = me.meme_generator.MemeGenerator(output_dir='static')
 
+
 def setup():
     """ Load all resources """
 
@@ -35,6 +36,7 @@ def setup():
 
 
 quotes, imgs = setup()
+
 
 @app.route('/')
 def meme_rand():
@@ -65,23 +67,22 @@ def meme_post():
     quote_author_id = 'author'
 
     img = download_image(image_url=request.form.get(image_url_id))
-    if img == None:
+    if img is None:
         return render_template('meme_form.html', error="some went wrong, when trzing to download the image")
     else:
         meme_path = meme.make_meme(img,
                               request.form.get(quote_body_id),
-                              request.form.get(quote_author_id)
-                              )
-
+                              request.form.get(quote_author_id))
 
         return render_template('meme.html', path=get_relative_path(meme_path))
+
 
 def download_image(image_url: str) -> Optional[str]:
     # https://towardsdatascience.com/how-to-download-an-image-using-python-38a75cfa21c
     filename = image_url.split("/")[-1]
     download_location = Path(tempfile.gettempdir(), f"{filename}")
     try:
-        img_req = requests.get(image_url, stream = True)
+        img_req = requests.get(image_url, stream=True)
         if img_req.status_code == 200:
             with open(download_location, 'wb') as img_f:
                 img_f.write(img_req.content)
