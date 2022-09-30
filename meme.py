@@ -35,7 +35,7 @@ def generate_meme(path=None, body=None, author=None):
             raise Exception('Author Required if Body is Used')
         quote = qe.quote_model.QuoteModel(body, author)
 
-    meme = me.meme_generator.MemeGenerator(img_location=img, output_dir='/tmp')
+    meme = me.meme_generator.MemeGenerator(output_dir='./tmp')
     path = meme.make_meme(img, quote.body, quote.author)
     return path
 

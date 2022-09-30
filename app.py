@@ -1,14 +1,17 @@
 import random
 import os
+from typing import Optional
 import requests
+from requests import RequestException
+import tempfile
+from pathlib import Path
 from flask import Flask, render_template, abort, request
 
-# @TODO Import your Ingestor and MemeEngine classes
+import QuoteEngine as qe
+import MemeEngine as me
 
 app = Flask(__name__)
-
-meme = MemeEngine('./static')
-
+meme = me.meme_generator.MemeGenerator(output_dir='static')
 
 def setup():
     """ Load all resources """
@@ -18,35 +21,34 @@ def setup():
                    './_data/DogQuotes/DogQuotesPDF.pdf',
                    './_data/DogQuotes/DogQuotesCSV.csv']
 
-    # TODO: Use the Ingestor class to parse all files in the
-    # quote_files variable
-    quotes = None
+    quotes = []
+    for f in quote_files:
+        quotes.extend(qe.ingestor.Ingestor.parse(f))
 
     images_path = "./_data/photos/dog/"
 
-    # TODO: Use the pythons standard library os class to find all
-    # images within the images images_path directory
-    imgs = None
+    imgs = []
+    for root, dirs, files in os.walk(images_path):
+        imgs = [os.path.join(root, name) for name in files]
 
     return quotes, imgs
 
 
 quotes, imgs = setup()
 
-
 @app.route('/')
 def meme_rand():
     """ Generate a random meme """
 
-    # @TODO:
-    # Use the random python standard library class to:
-    # 1. select a random image from imgs array
-    # 2. select a random quote from the quotes array
+    img = random.choice(imgs)
+    quote = random.choice(quotes)
+    meme_path = meme.make_meme(img, quote.body, quote.author)
 
-    img = None
-    quote = None
-    path = meme.make_meme(img, quote.body, quote.author)
-    return render_template('meme.html', path=path)
+    return render_template('meme.html', path=get_relative_path(meme_path))
+
+
+def get_relative_path(img_path: Path, proj_path: Path = Path(__file__).parent) -> Path:
+    return Path(img_path).relative_to(proj_path)
 
 
 @app.route('/create', methods=['GET'])
@@ -58,17 +60,37 @@ def meme_form():
 @app.route('/create', methods=['POST'])
 def meme_post():
     """ Create a user defined meme """
+    image_url_id = 'image_url'
+    quote_body_id = 'body'
+    quote_author_id = 'author'
 
-    # @TODO:
-    # 1. Use requests to save the image from the image_url
-    #    form param to a temp local file.
-    # 2. Use the meme object to generate a meme using this temp
-    #    file and the body and author form paramaters.
-    # 3. Remove the temporary saved image.
+    img = download_image(image_url=request.form.get(image_url_id))
+    if img == None:
+        return render_template('meme_form.html', error="some went wrong, when trzing to download the image")
+    else:
+        meme_path = meme.make_meme(img,
+                              request.form.get(quote_body_id),
+                              request.form.get(quote_author_id)
+                              )
 
-    path = None
 
-    return render_template('meme.html', path=path)
+        return render_template('meme.html', path=get_relative_path(meme_path))
+
+def download_image(image_url: str) -> Optional[str]:
+    # https://towardsdatascience.com/how-to-download-an-image-using-python-38a75cfa21c
+    filename = image_url.split("/")[-1]
+    download_location = Path(tempfile.gettempdir(), f"{filename}")
+    try:
+        img_req = requests.get(image_url, stream = True)
+        if img_req.status_code == 200:
+            with open(download_location, 'wb') as img_f:
+                img_f.write(img_req.content)
+                return str(download_location)
+
+    except request.ConnectionError:
+        return None
+    except RequestException:
+        return None
 
 
 if __name__ == "__main__":

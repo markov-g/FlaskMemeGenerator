@@ -14,6 +14,7 @@ install = "*"
 python-docx = "*"
 flask = "*"
 pillow = "*"
+requests = "*"
 
 [dev-packages]
 
